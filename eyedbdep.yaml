@@ -43,6 +43,6 @@ spec:
       resources:
         requests:
           storage: 1Gi
-      nodeSelector:
-        zone: us-east-1a  # to indicate which zone we want our pods to run, should be same with the zone our volume is.
+      # nodeSelector:
+      #   zone: us-east-1a  # to indicate which zone we want our pods to run, should be same with the zone our volume is.
 
