@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: eyedb
   labels:
@@ -34,15 +34,10 @@ spec:
                  secretKeyRef:
                    key: MONGO_INITDB_ROOT_PASSWORD
                    name: eye-secret
-  volumeClaimTemplates:
-  - metadata:
-      name: eye-db-data
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      storageClassName: standard
-      resources:
-        requests:
-          storage: 1Gi
+  volumes:
+  - name: eye-db-data
+    persistentVolumeClaim:
+      claimName: my-pvc
       # nodeSelector:
       #   zone: us-east-1a  # to indicate which zone we want our pods to run, should be same with the zone our volume is.
 
