@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: eyeserver
-          image: {{ .Values.eyeserver }}
-          # image: 154114/eyeserver-app
+          # image: {{ .Values.eyeserver }}
+          image: 154114/eyeserver-app
           ports:
             - containerPort: 5000
               name: eyeserver-port

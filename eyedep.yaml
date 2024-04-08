@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: eyeapp
-          image: {{ .Values.eyeapp }}
-          # image: 154114/eyefront-app
+          # image: {{ .Values.eyeapp }}
+          image: 154114/eyefront-app
           ports:
             - containerPort: 3000
               name: eyeapp-port
