@@ -34,10 +34,16 @@ spec:
                  secretKeyRef:
                    key: MONGO_INITDB_ROOT_PASSWORD
                    name: eye-secret
-  volumes:
-  - name: eye-db-data
-    persistentVolumeClaim:
-      claimName: my-pvc
+  volumeClaimTemplates:
+  - metadata:
+      name: my-pvc
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: standard
       # nodeSelector:
       #   zone: us-east-1a  # to indicate which zone we want our pods to run, should be same with the zone our volume is.
 
