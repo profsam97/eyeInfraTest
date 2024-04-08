@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eyeapp
+  labels:
+    app: eyeapp
+spec:
+  selector:
+    matchLabels:
+      app: eyeapp
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: eyeapp
+    spec:
+      containers:
+        - name: eyeapp
+          image: {{ .Values.eyeapp }}
+          # image: 154114/eyefront-app
+          ports:
+            - containerPort: 3000
+              name: eyeapp-port
+          env:
+            - name: NEXT_PUBLIC_SERVER
+              valueFrom:
+                secretKeyRef:
+                  key: SERVER
+                  name: eye-secret
+      initContainers:
+        - name: init-server
+          image: busybox
+          command: [ 'sh', '-c', 'until nslookup web-server.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done;' ]
+          # here we wait for the backend svc to start up first, as our app depends on it.

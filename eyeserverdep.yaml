@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eyeserver
+  labels:
+    app: eyeserver
+spec:
+  selector:
+    matchLabels:
+      app: eyeserver
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: eyeserver
+    spec:
+      containers:
+        - name: eyeserver
+          image: {{ .Values.eyeserver }}
+          # image: 154114/eyeserver-app
+          ports:
+            - containerPort: 5000
+              name: eyeserver-port
+          env:
+            - name: MONGO_URL
+              valueFrom:
+                secretKeyRef:
+                  key: MONGO_URL
+                  name: eye-secret
+            -  name: JWT_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   key: JWT_SECRET
+                   name: eye-secret
+      initContainers:
+        - name: init-mydb
+          image: busybox
+          command: [ 'sh', '-c', 'until nslookup web-db.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done;' ]
+          # here we wait for the mongodb svc to start up first, as our app depends on it.

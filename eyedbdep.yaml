@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: eyedb
+  labels:
+    app: eyedb
+spec:
+  selector:
+    matchLabels:
+      app: eyedb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: eyedb
+    spec:
+      containers:
+        - name: eyedb
+          image: mongo
+          volumeMounts:
+            - mountPath: /var/lib/mongodb
+              name: eye-db-data
+          ports:
+            - containerPort: 27017
+              name: eyedb-port
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: MONGO_INITDB_ROOT_USERNAME
+                  name: eye-secret
+            -  name: MONGO_INITDB_ROOT_PASSWORD
+               valueFrom:
+                 secretKeyRef:
+                   key: MONGO_INITDB_ROOT_PASSWORD
+                   name: eye-secret
+  volumeClaimTemplates:
+  - metadata:
+      name: eye-db-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: standard
+      resources:
+        requests:
+          storage: 1Gi
+      nodeSelector:
+        zone: us-east-1a  # to indicate which zone we want our pods to run, should be same with the zone our volume is.
+
